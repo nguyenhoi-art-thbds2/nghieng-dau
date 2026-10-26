@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nghiêng đầu chọn đáp án – Tiểu học</title>
+<meta name="description" content="Game ôn tập cho học sinh tiểu học: nghiêng đầu trước camera để chọn đáp án A hoặc B. Giáo viên tự nhập câu hỏi cho mọi môn học.">
+<meta name="author" content="Phát triển bởi Thầy Hợi – Trường Tiểu học Bảo Đài số 2, TP Bắc Ninh">
+<meta name="theme-color" content="#e6dcff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%90%B1%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap">
+<style>
+:root{--ink:#5b3f73;--edge:#d6b4ec;--paper:#fffafd;--sun:#ffe28a;--a:#ff8fb8;--b:#72c8ff;--good:#6fdc9b;--bad:#ff8aa0;--pink:#ffc2dc}
+*{box-sizing:border-box}
+html,body{min-height:100%;margin:0}
+body{font-family:"Baloo 2",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);display:flex;justify-content:center;
+  background:radial-gradient(#ffffffb0 2px,transparent 2.6px) 0 0/28px 28px,linear-gradient(160deg,#ffe3f1,#e6dcff 50%,#d6f1ff);background-attachment:fixed;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+main{width:100%;max-width:960px;min-height:100vh;padding:14px;display:flex;flex-direction:column;gap:12px}
+#app{flex:1;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--paper);border:3.5px solid var(--ink);border-radius:28px;box-shadow:0 6px 0 var(--edge)}
+h1,h2{margin:0;line-height:1.1}
+.title{font-size:clamp(26px,6vw,44px);font-weight:800}
+.btn{border:3.5px solid var(--ink);border-radius:999px;background:var(--sun);color:var(--ink);font:800 clamp(18px,3.4vw,24px) "Baloo 2",system-ui,sans-serif;padding:10px 24px;cursor:pointer;box-shadow:0 5px 0 var(--edge),inset 0 -5px 0 #0000001a;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge),inset 0 -5px 0 #0000001a}
+.btn.alt{background:#fff}.btn.pink{background:var(--pink)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,.opt:focus-visible,summary:focus-visible{outline:4px solid var(--b);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.center{text-align:center}
+.note{font-weight:500;font-size:15px}
+.head{display:flex;gap:14px;align-items:center;padding:14px 18px}
+.mas{width:84px;height:84px;flex:none;animation:bob 2.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-7px) rotate(-5deg)}}
+.set{padding:12px 16px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-weight:700;font-size:16px}
+input[type=text],input[type=number],select,textarea{font:600 17px "Baloo 2",system-ui,sans-serif;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:16px;padding:6px 12px;min-width:0}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--a)}
+.rw{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px}
+.rw .no{width:34px;height:34px;border-radius:50%;background:var(--sun);border:3px solid var(--ink);font-weight:800;display:grid;place-items:center;flex:none}
+.rw .em{width:64px;text-align:center;font-size:24px}.rw .qq{flex:1 1 260px}.rw .ok{flex:1 1 150px;background:#e6faee}.rw .bad{flex:1 1 150px;background:#ffe9ee}
+.x{border:3px solid var(--ink);background:#fff;border-radius:14px;font-size:20px;cursor:pointer;padding:2px 8px}
+details{padding:10px 16px}summary{cursor:pointer;font-weight:800}
+textarea{width:100%;height:110px;margin-top:8px}
+.top{display:flex;gap:12px;align-items:stretch}
+.qcard{flex:1;display:flex;gap:14px;align-items:center;padding:12px 16px}
+.mas2{width:clamp(64px,11vw,92px);height:clamp(64px,11vw,92px);flex:none}
+.qe{font-size:clamp(34px,7vw,56px);flex:none}
+.qt{font-size:clamp(22px,4.6vw,40px);font-weight:800;line-height:1.15;overflow-wrap:anywhere}
+.qn{font-size:14px;font-weight:700;opacity:.75}
+.stage{display:flex;gap:10px;align-items:center;padding:10px}
+.side{flex:0 0 70px;text-align:center;border:3px solid var(--ink);border-radius:20px;padding:8px 2px;font-weight:800;font-size:14px;line-height:1.1}
+.side b{display:block;font-size:30px}
+.side.l{background:var(--a)}.side.r{background:var(--b)}
+.vbox{position:relative;flex:1;aspect-ratio:16/9;max-height:40vh;border-radius:20px;overflow:hidden;background:repeating-linear-gradient(45deg,#fff0f7,#fff0f7 14px,#f1e8ff 14px,#f1e8ff 28px);border:3.5px solid var(--ink)}
+.vbox video,.vbox canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px}
+.ov.fb{background:#fffafdee;animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+.ov .big{font-size:clamp(30px,7vw,56px);font-weight:800;line-height:1.05}
+.ov .sub{font-weight:700;margin-top:4px;font-size:clamp(15px,2.6vw,22px)}
+.ov.ok .big{color:#17a35a}.ov.no .big{color:#e0486a}
+.ov .q{font-size:clamp(40px,9vw,80px)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{position:relative;border:3.5px solid var(--ink);border-radius:30px;color:#fff;text-shadow:0 2px 0 rgba(91,63,115,.45);font:800 clamp(20px,4.6vw,36px)/1.1 "Baloo 2",system-ui,sans-serif;padding:20px 12px;cursor:pointer;box-shadow:0 6px 0 var(--edge),inset 0 -6px 0 #0000001a;overflow-wrap:anywhere}
+.opt.a{background:var(--a)}.opt.b{background:var(--b)}
+.opt .k{position:absolute;top:-14px;width:34px;height:34px;border-radius:50%;background:#fff;color:var(--ink);text-shadow:none;border:3px solid var(--ink);font-size:18px;line-height:28px}
+.opt.a .k{left:-8px}.opt.b .k{right:-8px}
+.opt.right{background:var(--good);animation:hop .5s}
+.opt.wrong{background:var(--bad);animation:shake .4s}
+.opt:disabled:not(.right):not(.wrong){opacity:.55}
+@keyframes hop{40%{transform:translateY(-12px) scale(1.04)}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.bar{height:14px;border-radius:10px;background:#fff;border:3px solid var(--ink);overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:var(--sun)}
+.bar.h i{width:0;background:var(--a)}
+.cnt{text-align:center;font-weight:700;font-size:16px}
+.mas3{width:120px;height:120px;margin:0 auto}
+.credit{margin-top:4px;padding:10px 14px;text-align:center;font-weight:700;font-size:14px;line-height:1.4;background:#ffffffd9;border:3px solid var(--ink);border-radius:22px;box-shadow:0 4px 0 var(--edge)}
+.credit a{color:var(--ink)}
+.cf{position:fixed;top:-50px;z-index:9;pointer-events:none;animation:fall 1.9s ease-in forwards}
+@keyframes fall{to{transform:translateY(115vh) rotate(420deg)}}
+@media (max-width:560px){.side{flex-basis:44px;font-size:11px}.side b{font-size:22px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<div id="app" aria-live="polite"></div>
+<footer class="credit">Phát triển bởi Thầy Hợi · Trường Tiểu học Bảo Đài số 2 - TP Bắc Ninh · <a href="tel:0967834824">0967 834 824</a></footer>
+</main>
+<script type="module">
+var MP="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+var MODEL="https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
+var HOLD=1200,K="nd_quiz_v2";
+var DEF={title:"Ôn tập vui",time:20,tilt:12,shuffle:true,speak:"off",items:[
+{q:"7 + 5 = ?",e:"🧮",c:"12",w:"11"},
+{q:"Con vật nào kêu “meo meo”?",e:"🐱",c:"Con mèo",w:"Con chó"},
+{q:"Từ trái nghĩa với “cao” là gì?",e:"📏",c:"thấp",w:"to"},
+{q:"Mặt trời mọc ở hướng nào?",e:"🌅",c:"Đông",w:"Tây"},
+{q:"“Apple” nghĩa là gì?",e:"🍎",c:"quả táo",w:"quả cam"}]};
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function load(){try{var s=JSON.parse(localStorage.getItem(K));if(s&&s.items&&s.items.length)return Object.assign(clone(DEF),s)}catch(e){}return clone(DEF)}
+function save(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
+var D=load(),app=document.getElementById("app");
+var S={i:0,score:0,locked:true,side:"A",t:0,tick:null,next:null,hs:null,h0:0,G:[]};
+var cam={on:false,v:null,c:null,lm:null,last:-1};
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function clear(){clearInterval(S.tick);clearTimeout(S.next)}
+function speak(t){if(D.speak==="off")return;try{var u=new SpeechSynthesisUtterance(t);u.lang=D.speak;u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function tone(c,t,f,d,type,v){var o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.02)}
+function beep(ok){try{var c=beep.c||(beep.c=new AudioContext());if(c.state==="suspended")c.resume();var t=c.currentTime;
+  if(ok){ // nhạc chiến thắng: chạy lên Đô-Mi-Sol-Đô, vỗ tay "pốp", hợp âm cuối và tiếng lấp lánh
+    [523,659,784,1047].forEach(function(f,i){tone(c,t+i*.09,f,.16,"triangle",.2)});
+    var n=c.createBuffer(1,Math.floor(c.sampleRate*.09),c.sampleRate),d=n.getChannelData(0);
+    for(var i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
+    var s=c.createBufferSource(),g=c.createGain();s.buffer=n;g.gain.value=.22;s.connect(g);g.connect(c.destination);s.start(t+.4);
+    [1047,1319,1568].forEach(function(f){tone(c,t+.4,f,.55,"triangle",.14)});
+    [2093,2637,3136,2637,3520].forEach(function(f,i){tone(c,t+.5+i*.07,f,.14,"sine",.07)});
+  }else{
+    [240,170].forEach(function(f,i){tone(c,t+i*.14,f,.13,"sawtooth",.15)});
+  }}catch(e){}}
+function confetti(){var e=["💖","⭐","🌸","✨","🎀","🍭"];for(var i=0;i<28;i++){var s=document.createElement("span");s.className="cf";s.textContent=e[i%6];s.style.left=Math.random()*96+"vw";s.style.animationDelay=Math.random()*.5+"s";s.style.fontSize=20+Math.random()*24+"px";document.body.appendChild(s);setTimeout(function(n){n.remove()},2600,s)}}
+
+/* ---------- Nhân vật chibi (SVG): normal | happy | sad ---------- */
+function mascot(m){
+  var k="#5b3f73",eyes,mouth;
+  if(m==="happy"){
+    eyes='<path d="M26 54q8-11 16 0M58 54q8-11 16 0" fill="none" stroke="'+k+'" stroke-width="4" stroke-linecap="round"/>';
+    mouth='<path d="M42 66q8 10 16 0z" fill="#ff7a93" stroke="'+k+'" stroke-width="2.5" stroke-linejoin="round"/>';
+  }else{
+    eyes='<ellipse cx="34" cy="54" rx="8" ry="10" fill="'+k+'"/><ellipse cx="66" cy="54" rx="8" ry="10" fill="'+k+'"/>'+
+      '<circle cx="37" cy="50" r="3.2" fill="#fff"/><circle cx="69" cy="50" r="3.2" fill="#fff"/><circle cx="31.5" cy="58" r="1.6" fill="#fff"/><circle cx="63.5" cy="58" r="1.6" fill="#fff"/>';
+    mouth=m==="sad"
+      ?'<path d="M43 71q7-6 14 0" fill="none" stroke="'+k+'" stroke-width="3" stroke-linecap="round"/><path d="M24 66q-3.5 6 0 9q3.5-3 0-9z" fill="#8fd3ff"/>'
+      :'<path d="M43 66q3.5 5 7 0q3.5 5 7 0" fill="none" stroke="'+k+'" stroke-width="3" stroke-linecap="round"/>';
+  }
+  return '<svg viewBox="0 0 100 100" width="100%" height="100%" role="img" aria-label="Bé mèo chibi">'+
+    '<path d="M14 40L20 8L44 24Z M86 40L80 8L56 24Z" fill="#fff" stroke="'+k+'" stroke-width="3.5" stroke-linejoin="round"/>'+
+    '<path d="M22 32L25 17L36 25Z M78 32L75 17L64 25Z" fill="#ffc2dc"/>'+
+    '<ellipse cx="50" cy="58" rx="40" ry="34" fill="#fff" stroke="'+k+'" stroke-width="3.5"/>'+
+    '<ellipse cx="22" cy="66" rx="7" ry="4.5" fill="#ffb3c7"/><ellipse cx="78" cy="66" rx="7" ry="4.5" fill="#ffb3c7"/>'+
+    eyes+mouth+
+    '<path d="M74 27l-9-6v12zM74 27l9-6v12z" fill="#ff8fb8" stroke="'+k+'" stroke-width="2.5" stroke-linejoin="round"/><circle cx="74" cy="27" r="3" fill="#ffe28a" stroke="'+k+'" stroke-width="2"/></svg>';
+}
+
+/* ---------- Màn hình giáo viên nhập câu hỏi ---------- */
+function rowHtml(it,i){var n=' data-i="'+i+'" ';return '<div class="card rw"><div class="no">'+(i+1)+'</div>'+
+'<input type="text" class="em"'+n+'data-f="e" value="'+esc(it.e)+'" placeholder="😀" maxlength="4" aria-label="Hình emoji (không bắt buộc)">'+
+'<input type="text" class="qq"'+n+'data-f="q" value="'+esc(it.q)+'" placeholder="Câu hỏi" aria-label="Câu hỏi '+(i+1)+'">'+
+'<input type="text" class="ok"'+n+'data-f="c" value="'+esc(it.c)+'" placeholder="✅ Đáp án đúng" aria-label="Đáp án đúng">'+
+'<input type="text" class="bad"'+n+'data-f="w" value="'+esc(it.w)+'" placeholder="❌ Đáp án sai" aria-label="Đáp án sai">'+
+'<button class="x" data-del="'+i+'" aria-label="Xóa câu '+(i+1)+'">🗑️</button></div>'}
+
+function edit(msg,focus){
+  clear();S.locked=true;
+  app.innerHTML='<div class="card head"><div class="mas">'+mascot("normal")+'</div><div><h1 class="title">Nghiêng đầu chọn đáp án</h1><div class="note">Nhập câu hỏi cho bất kỳ môn nào. Mỗi câu có 1 đáp án đúng và 1 đáp án sai, máy sẽ tự đổi vị trí A/B.</div></div></div>'+
+  '<div class="card set"><label>Tên bài <input type="text" data-s="title" value="'+esc(D.title)+'"></label>'+
+  '<label>Giây mỗi câu <input type="number" data-s="time" min="5" max="120" value="'+D.time+'" style="width:76px"></label>'+
+  '<label>Độ nhạy nghiêng <select data-s="tilt"><option value="8">Cao (nghiêng nhẹ)</option><option value="12">Vừa</option><option value="18">Thấp (nghiêng nhiều)</option></select></label>'+
+  '<label>Đọc to <select data-s="speak"><option value="off">Tắt</option><option value="vi-VN">Tiếng Việt</option><option value="en-US">English</option></select></label>'+
+  '<label><input type="checkbox" data-s="shuffle"'+(D.shuffle?' checked':'')+'> Trộn thứ tự câu</label></div>'+
+  '<div id="rows" class="row" style="flex-direction:column;align-items:stretch">'+D.items.map(rowHtml).join("")+'</div>'+
+  '<div class="row"><button class="btn alt" id="add">➕ Thêm câu hỏi</button></div>'+
+  '<details class="card"><summary>📋 Dán nhiều câu cùng lúc (từ Word/Excel)</summary><div class="note" style="margin-top:6px">Mỗi dòng một câu: <b>Câu hỏi | Đáp án đúng | Đáp án sai | Emoji (không bắt buộc)</b>. Dán từ Excel (các cột ngăn bằng Tab) cũng được.</div><textarea id="bulk" placeholder="3 x 4 = ? | 12 | 7 | 🧮"></textarea><button class="btn alt" id="imp" style="margin-top:8px">Thêm vào danh sách</button></details>'+
+  '<div class="card center" style="padding:16px"><div class="row" style="justify-content:center"><button class="btn" id="go">📷 Chơi bằng camera (nghiêng đầu)</button><button class="btn pink" id="nocam">🖱️ Chơi không camera</button></div>'+
+  '<p class="note" id="st" style="margin:10px 0 0">'+esc(msg||"Lần đầu bật camera cần Internet để tải mô hình nhận diện. Câu hỏi được lưu tự động trên máy này.")+'</p></div>';
+  app.querySelector('[data-s="tilt"]').value=D.tilt;app.querySelector('[data-s="speak"]').value=D.speak;
+  document.getElementById("add").onclick=function(){D.items.push({q:"",e:"",c:"",w:""});save();edit(msg,D.items.length-1)};
+  document.getElementById("imp").onclick=function(){
+    var n=0;document.getElementById("bulk").value.split(/\r?\n/).forEach(function(l){var p=l.split(/\||\t/).map(function(x){return x.trim()});
+      if(p.length>=3&&p[0]&&p[1]&&p[2]){D.items.push({q:p[0],c:p[1],w:p[2],e:p[3]||""});n++}});
+    save();edit(n?"Đã thêm "+n+" câu.":"Chưa đọc được dòng nào. Mỗi dòng cần ít nhất: Câu hỏi | Đáp án đúng | Đáp án sai.")};
+  document.getElementById("go").onclick=function(){
+    var st=document.getElementById("st");if(!validate(st))return;
+    if(cam.on){play();return}
+    st.textContent="Đang bật camera và tải mô hình nhận diện…";
+    initCam().then(play).catch(function(e){console.error(e);st.textContent="Không bật được camera: "+(e&&e.message?e.message:e)+". Hãy cho phép camera, kiểm tra Internet, hoặc chọn “Chơi không camera”."})};
+  document.getElementById("nocam").onclick=function(){if(!validate(document.getElementById("st")))return;stopCam();play()};
+  if(focus!=null){var el=app.querySelector('.qq[data-i="'+focus+'"]');if(el)el.focus()}
+}
+function valid(){return D.items.filter(function(x){return x.q.trim()&&x.c.trim()&&x.w.trim()})}
+function validate(st){if(valid().length)return true;st.textContent="Cần ít nhất 1 câu có đủ: câu hỏi, đáp án đúng, đáp án sai.";return false}
+
+app.addEventListener("input",function(e){
+  var t=e.target,d=t.dataset;
+  if(d.f&&d.i!=null)D.items[d.i][d.f]=t.value;
+  else if(d.s){D[d.s]=t.type==="checkbox"?t.checked:(d.s==="time"||d.s==="tilt")?(+t.value||DEF[d.s]):t.value}
+  else return;
+  save()});
+app.addEventListener("click",function(e){var b=e.target.closest("[data-del]");if(!b)return;
+  D.items.splice(+b.dataset.del,1);if(!D.items.length)D.items.push({q:"",e:"",c:"",w:""});save();edit()});
+
+/* ---------- Camera: nhận diện nghiêng đầu ---------- */
+function stopCam(){cam.on=false;if(cam.v&&cam.v.srcObject)cam.v.srcObject.getTracks().forEach(function(t){t.stop()});cam.v=cam.c=null}
+async function initCam(){
+  var v=document.createElement("video");v.playsInline=true;v.muted=true;
+  v.srcObject=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:960},height:{ideal:540}},audio:false});
+  await v.play();
+  var mp=await import(MP+"/vision_bundle.mjs"),fs=await mp.FilesetResolver.forVisionTasks(MP+"/wasm");
+  var opt=function(d){return{baseOptions:{modelAssetPath:MODEL,delegate:d},runningMode:"VIDEO",numFaces:12}};
+  try{cam.lm=await mp.FaceLandmarker.createFromOptions(fs,opt("GPU"))}catch(e){cam.lm=await mp.FaceLandmarker.createFromOptions(fs,opt("CPU"))}
+  cam.v=v;cam.c=document.createElement("canvas");cam.on=true;cam.last=-1;loop();
+}
+function loop(){
+  if(!cam.on)return;var v=cam.v;
+  if(v.readyState>=2&&v.currentTime!==cam.last){
+    cam.last=v.currentTime;
+    var r=cam.lm.detectForVideo(v,performance.now()),W=v.videoWidth,H=v.videoHeight,L=0,R=0,c=cam.c;
+    if(c.width!==W){c.width=W;c.height=H}
+    ;
+    (r.faceLandmarks||[]).forEach(function(f){
+      var a=Math.atan2((f[263].y-f[33].y)*H,(f[263].x-f[33].x)*W)*180/Math.PI;  // góc nghiêng theo 2 khóe mắt ngoài
+      var d=a>D.tilt?"A":a<-D.tilt?"B":null;
+      if(d==="A")L++;else if(d==="B")R++;
+    });
+    track(L,R);
+  }
+  requestAnimationFrame(loop);
+}
+function track(L,R){
+  var cnt=document.getElementById("cnt"),hb=document.getElementById("hbar");
+  if(!cnt||!hb||S.locked){S.hs=null;return}
+  var w=L>R?"A":R>L?"B":null,now=performance.now();
+  cnt.textContent="⬅️ Nghiêng trái (A): "+L+"   ·   Nghiêng phải (B): "+R+" ➡️";
+  if(w!==S.hs){S.hs=w;S.h0=now}
+  var p=w?Math.min(1,(now-S.h0)/HOLD):0;hb.style.width=(p*100)+"%";
+  if(w&&p>=1){S.hs=null;pick(w)}
+}
+
+/* ---------- Chơi ---------- */
+function play(){
+  var g=valid().map(function(x){return{q:x.q.trim(),e:(x.e||"").trim(),c:x.c.trim(),w:x.w.trim()}});
+  if(D.shuffle)for(var i=g.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=g[i];g[i]=g[j];g[j]=t}
+  S.G=g;S.i=0;S.score=0;ask();
+}
+function ask(){
+  clear();S.locked=false;S.t=D.time;S.hs=null;
+  var q=S.G[S.i];S.side=Math.random()<.5?"A":"B";
+  var a=S.side==="A"?q.c:q.w,b=S.side==="A"?q.w:q.c;
+  app.innerHTML=
+  '<div class="top"><div class="card qcard" id="qc"><div class="mas2" id="mas">'+mascot("normal")+'</div>'+(q.e?'<div class="qe" aria-hidden="true">'+esc(q.e)+'</div>':'')+
+  '<div><div class="qn">'+esc(D.title)+' · Câu '+(S.i+1)+'/'+S.G.length+' · ⭐ '+S.score+'</div><div class="qt">'+esc(q.q)+'</div></div></div></div>'+
+  '<div class="card stage"><div class="side l"><b>⬅️</b>TRÁI<br>A</div><div class="vbox" id="vbox"><div class="ov" id="mid">'+(cam.on?'':'<div class="q">🤔</div><div class="sub">Bấm A hoặc B để chọn</div>')+'</div></div><div class="side r"><b>➡️</b>PHẢI<br>B</div></div>'+
+  '<div class="bar" title="Thời gian"><i id="bar"></i></div>'+
+  '<div class="opts"><button class="opt a" id="oa"><span class="k">A</span>'+esc(a)+'</button><button class="opt b" id="ob"><span class="k">B</span>'+esc(b)+'</button></div>'+
+  (cam.on?'<div class="bar h"><i id="hbar"></i></div>':'')+
+  '<div class="cnt" id="cnt">'+(cam.on?'Đang tìm các bạn…':'Hoặc bấm phím A / B')+'</div>';
+  if(cam.on){var vb=document.getElementById("vbox");vb.prepend(cam.c);vb.prepend(cam.v)}
+  document.getElementById("oa").onclick=function(){pick("A")};
+  document.getElementById("ob").onclick=function(){pick("B")};
+  speak(q.q);
+  S.tick=setInterval(function(){S.t-=.1;var bar=document.getElementById("bar");if(bar)bar.style.width=Math.max(0,S.t/D.time*100)+"%";if(S.t<=0)pick(null)},100);
+}
+function pick(side){
+  if(S.locked||!S.G.length)return;S.locked=true;clear();
+  var q=S.G[S.i],ok=side===S.side,mid=document.getElementById("mid");if(!mid)return;
+  if(ok){S.score++;confetti()}
+  beep(ok);
+  var oa=document.getElementById("oa"),ob=document.getElementById("ob");oa.disabled=ob.disabled=true;
+  (S.side==="A"?oa:ob).classList.add("right");
+  if(side&&!ok)(side==="A"?oa:ob).classList.add("wrong");
+  document.getElementById("mas").innerHTML=mascot(ok?"happy":"sad");
+  mid.className="ov fb "+(ok?"ok":"no");
+  mid.innerHTML='<div class="big">'+(ok?"Giỏi quá! 🎉":(side?"Tiếc quá! 💪":"Hết giờ ⏰"))+'</div><div class="sub">Đáp án đúng: '+S.side+' – '+esc(q.c)+'</div>';
+  var hb=document.getElementById("hbar");if(hb)hb.style.width="0";
+  speak(q.c);
+  S.next=setTimeout(advance,3200);
+}
+function advance(){clear();S.i++;if(S.i>=S.G.length)return end();ask()}
+function end(){
+  var n=S.score,t=S.G.length,r=n/t,st=r>=.8?"⭐⭐⭐":r>=.5?"⭐⭐":"⭐";
+  if(r>=.5)confetti();
+  app.innerHTML='<div class="card center" style="padding:28px 16px;margin-top:6vh"><div class="mas3">'+mascot(r>=.5?"happy":"normal")+'</div><h1 class="title">'+n+' / '+t+' câu đúng</h1>'+
+  '<div style="font-size:48px;margin:6px 0">'+st+'</div><p class="note" style="font-size:20px;margin:0 0 6px">'+(r>=.8?"Cả lớp xuất sắc!":r>=.5?"Làm tốt lắm!":"Cùng ôn lại nhé!")+'</p>'+
+  '<div class="row" style="justify-content:center"><button class="btn" id="again">🔁 Chơi lại</button><button class="btn alt" id="ed">✏️ Sửa câu hỏi</button></div></div>';
+  var b=document.getElementById("again");b.onclick=play;b.focus();document.getElementById("ed").onclick=function(){edit()};
+}
+document.addEventListener("keydown",function(e){
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||S.locked&&!S.next)return;
+  var k=e.key.toLowerCase();
+  if(k==="a")pick("A");else if(k==="b")pick("B");
+  else if((k===" "||k==="enter")&&S.locked&&S.next&&e.target.tagName!=="BUTTON"){e.preventDefault();advance()}
+});
+edit();
+</script>
+</body>
+</html>
